@@ -94,6 +94,17 @@ fn check_winner(current_player: char, board: &Board) -> bool {
     return false;
 }
 
+fn check_drwa(board: &Board) -> bool{
+    for row in board{
+        for cell in row{
+            if *cell == ' '{
+                return false;
+        }
+    }
+}
+    return true;
+}
+
 fn play_game() {
     let mut board = initialize_board();
     let mut current_player = PLAYER_X;
@@ -108,6 +119,10 @@ fn play_game() {
         if check_winner(current_player, &board){
             println!("Player {} is winnder", current_player);
             break;
+        }
+
+        if check_drwa(&board){
+            println!("Game is Draw");
         }
 
         current_player = if current_player == PLAYER_X {
