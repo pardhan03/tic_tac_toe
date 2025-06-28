@@ -1,27 +1,78 @@
-use std::io;
+use std::io::{self, Read};
 
-const PLAYER_X:char = 'X';
-const PLAYER_O:char = 'O';
+const PLAYER_X: char = 'X';
+const PLAYER_O: char = 'O';
 
-const BOARD_SIZE:usize = 3;
+const BOARD_SIZE: usize = 3;
 
-type Board = [[char;BOARD_SIZE];BOARD_SIZE];
+type Board = [[char; BOARD_SIZE]; BOARD_SIZE];
 
-fn initialize_board() ->Board{
-    return [[' ';BOARD_SIZE];BOARD_SIZE]
+fn initialize_board() -> Board {
+    return [[' '; BOARD_SIZE]; BOARD_SIZE];
 }
 
-fn print_board(board: &Board){
-    for row in board{
-        for cell in row{
-            println!("{}", cell);
+fn print_board(board: &Board) {
+    println!("\n  0   1   2"); // Column headers
+    for (i, row) in board.iter().enumerate() {
+        print!("{}", i); // Row header
+        for (j, cell) in row.iter().enumerate() {
+            print!(" {} ", cell);
+            if j < BOARD_SIZE - 1 {
+                print!("|");
+            }
         }
-        println!();
+        println!(); // Newline after each row
+        if i < BOARD_SIZE - 1 {
+            println!(" ---+---+---");
+        }
+    }
+    println!();
+}
+
+fn get_player_move(current_player: char, board: &Board) -> (usize, usize) {
+    loop {
+        println!("Player {} input (row col):", current_player);
+
+        let mut input = String::new(); // Make it mutable
+        if io::stdin().read_line(&mut input).is_err() {
+            println!("Failed to read input. Try again.");
+            continue;
+        }
+
+        let coordinates: Vec<usize> = input
+            .trim() // Remove newline and extra spaces
+            .split_whitespace()
+            .filter_map(|s| s.parse::<usize>().ok()) // safely parse
+            .collect();
+
+        if coordinates.len() == 2 {
+            let (row, col) = (coordinates[0], coordinates[1]);
+            if row < BOARD_SIZE && col < BOARD_SIZE && board[row][col] == ' ' {
+                return (row, col);
+            }
+        }
+
+        println!("Invalid input. Please enter two numbers (0-{}) separated by a space, for an empty cell.", BOARD_SIZE - 1);
     }
 }
 
-fn play_game(){
+fn play_game() {
+    let mut board = initialize_board();
+    let mut current_player = PLAYER_X;
 
+    loop {
+        println!("Current Board:");
+        print_board(&board);
+
+        let (row, col) = get_player_move(current_player, &board);
+        board[row][col] = current_player;
+
+        current_player = if current_player == PLAYER_X {
+            PLAYER_O
+        } else {
+            PLAYER_X
+        }
+    }
 }
 
 fn main() {
