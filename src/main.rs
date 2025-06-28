@@ -52,8 +52,46 @@ fn get_player_move(current_player: char, board: &Board) -> (usize, usize) {
             }
         }
 
-        println!("Invalid input. Please enter two numbers (0-{}) separated by a space, for an empty cell.", BOARD_SIZE - 1);
+        println!(
+            "Invalid input. Please enter two numbers (0-{}) separated by a space, for an empty cell.",
+            BOARD_SIZE - 1
+        );
     }
+}
+
+fn check_winner(current_player: char, board: &Board) -> bool {
+    // check along the row
+    for row in 0..BOARD_SIZE {
+        if board[row][0] == current_player
+            && board[row][1] == current_player
+            && board[row][2] == current_player
+        {
+            return true;
+        }
+    }
+
+    // check along the col
+    for col in 0..BOARD_SIZE {
+        if board[0][col] == current_player
+            && board[1][col] == current_player
+            && board[2][col] == current_player
+        {
+            return true;
+        }
+    }
+
+    // check diagonally
+    if (board[0][0] == current_player
+        && board[1][1] == current_player
+        && board[2][2] == current_player)
+        || (board[0][2] == current_player
+            && board[1][1] == current_player
+            && board[2][0] == current_player)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 fn play_game() {
@@ -66,6 +104,11 @@ fn play_game() {
 
         let (row, col) = get_player_move(current_player, &board);
         board[row][col] = current_player;
+
+        if check_winner(current_player, &board){
+            println!("Player {} is winnder", current_player);
+            break;
+        }
 
         current_player = if current_player == PLAYER_X {
             PLAYER_O
