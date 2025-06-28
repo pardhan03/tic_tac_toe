@@ -94,7 +94,7 @@ fn check_winner(current_player: char, board: &Board) -> bool {
     return false;
 }
 
-fn check_drwa(board: &Board) -> bool{
+fn check_draw(board: &Board) -> bool{
     for row in board{
         for cell in row{
             if *cell == ' '{
@@ -117,11 +117,11 @@ fn play_game() {
         board[row][col] = current_player;
 
         if check_winner(current_player, &board){
-            println!("Player {} is winnder", current_player);
+            println!("Player {} is winnder!", current_player);
             break;
         }
 
-        if check_drwa(&board){
+        if check_draw(&board){
             println!("Game is Draw");
         }
 
